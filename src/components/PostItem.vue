@@ -6,12 +6,11 @@
       <div><strong>Описание:</strong> {{ post.body }}</div>
     </div>
     <div class="post__btns">
-      <button
-          class="btn"
+      <my-button
           @click="$emit('remove', post)"
       >
         Удалить
-      </button>
+      </my-button>
     </div>
   </div>
 </template>
@@ -28,6 +27,7 @@ export default {
 </script>
 
 <style scoped>
+
 .post {
   padding: 15px;
   border: 2px solid teal;
@@ -39,15 +39,6 @@ export default {
 
 .post__btns {
   display: flex;
-}
-
-.btn {
-  margin-top: 15px;
-  align-self: flex-end;
-  padding: 10px 15px;
-  background: none;
-  color: teal;
-  border: 1px solid teal;
 }
 
 </style>
