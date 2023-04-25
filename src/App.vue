@@ -33,6 +33,23 @@
     />
     <div v-else>Идет загрузка...</div>
 
+    <div class="page__wrapper">
+      <div
+          v-for="pageNumber in totalPages"
+          :key="pageNumber"
+          class="page"
+          :class="{
+            'current-page': page === pageNumber
+          }"
+          @click="changePage(pageNumber)"
+      >
+        <!-- :style="{-->
+        <!--   background: условие-->
+        <!-- }"-->
+        {{ pageNumber }}
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -60,6 +77,9 @@ export default {
       isPostsLoading: false,
       selectedSort: '',
       searchQuery: '',
+      page: 1,
+      limit: 10,
+      totalPages: 0,
       sortOption: [
         {value: 'title', name: 'По названию'},
         {value: 'body', name: 'По названию'}
@@ -81,11 +101,23 @@ export default {
       this.dialogVisible = true;
     },
 
+    changePage(pageNumber) {
+      this.page = pageNumber;
+      // this.fetchPosts();
+      // перекинул в watch: { page() ...
+    },
+
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
 
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit,
+          }
+        });
+        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit);
         this.posts = response.data;
 
       } catch (e) {
@@ -95,6 +127,7 @@ export default {
       }
     }
   },
+
   mounted() {
     this.fetchPosts();
   },
@@ -111,13 +144,10 @@ export default {
     }
   },
 
-  // отрабатывает когда произошло изменение
   watch: {
-    // selectedSort(newValue) {
-    //   this.posts.sort((post1, post2) => {
-    //     return post1[newValue]?.localeCompare(post2[newValue])
-    //   })
-    // }
+    page() {
+      this.fetchPosts();
+    }
   }
 }
 </script>
@@ -130,4 +160,19 @@ export default {
   justify-content: space-between;
   margin: 15px 0;
 }
+
+.page__wrapper {
+  display: flex;
+  margin-top: 15px;
+}
+
+.page {
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.current-page {
+  border: 2px solid teal;
+}
+
 </style>
