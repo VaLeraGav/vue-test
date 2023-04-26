@@ -4,6 +4,7 @@
     <h2>Страница с постами</h2>
 
     <my-input
+        v-focus
         v-model="searchQuery"
         placeholder="Поиск..."
     />
