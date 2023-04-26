@@ -33,22 +33,29 @@
     />
     <div v-else>Идет загрузка...</div>
 
-    <div class="page__wrapper">
-      <div
-          v-for="pageNumber in totalPages"
-          :key="pageNumber"
-          class="page"
-          :class="{
-            'current-page': page === pageNumber
-          }"
-          @click="changePage(pageNumber)"
-      >
-        <!-- :style="{-->
-        <!--   background: условие-->
-        <!-- }"-->
-        {{ pageNumber }}
-      </div>
+    <div ref="observer" class="observer">
+
     </div>
+    <div class="page__wrapper">
+    </div>
+
+
+    <!--    <div class="page__wrapper">-->
+    <!--      <div-->
+    <!--          v-for="pageNumber in totalPages"-->
+    <!--          :key="pageNumber"-->
+    <!--          class="page"-->
+    <!--          :class="{-->
+    <!--            'current-page': page === pageNumber-->
+    <!--          }"-->
+    <!--          @click="changePage(pageNumber)"-->
+    <!--      >-->
+    <!--        &lt;!&ndash; :style="{&ndash;&gt;-->
+    <!--        &lt;!&ndash;   background: условие&ndash;&gt;-->
+    <!--        &lt;!&ndash; }"&ndash;&gt;-->
+    <!--        {{ pageNumber }}-->
+    <!--      </div>-->
+    <!--    </div>-->
 
   </div>
 </template>
@@ -101,16 +108,13 @@ export default {
       this.dialogVisible = true;
     },
 
-    changePage(pageNumber) {
-      this.page = pageNumber;
-      // this.fetchPosts();
-      // перекинул в watch: { page() ...
-    },
+    // changePage(pageNumber) {
+    //   this.page = pageNumber;
+    // },
 
     async fetchPosts() {
       try {
         this.isPostsLoading = true;
-
         const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
           params: {
             _page: this.page,
@@ -125,11 +129,46 @@ export default {
       } finally {
         this.isPostsLoading = false;
       }
+    },
+
+    async loadMorePosts() {
+      try {
+        this.page += 1;
+        // this.isPostsLoading = true;
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.page,
+            _limit: this.limit,
+          }
+        });
+        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit);
+        this.posts = [...this.posts, ...response.data];
+
+      } catch (e) {
+        alert('Ошибка')
+      }
+      // finally {
+      //   this.isPostsLoading = false;
+      // }
     }
+
   },
 
   mounted() {
     this.fetchPosts();
+    let options = {
+      rootMargin: "0px",
+      threshold: 1.0,
+    };
+
+    let callback = (entries, observer) => {
+      if (entries[0].isIntersecting && this.page < this.totalPages) {
+        this.loadMorePosts();
+      }
+    }
+
+    let observer = new IntersectionObserver(callback, options);
+    observer.observe(this.$refs.observer);
   },
 
   // всегда возвращает какое-то вычисление, возвращаться единожды
@@ -145,9 +184,11 @@ export default {
   },
 
   watch: {
-    page() {
-      this.fetchPosts();
-    }
+
+
+    // page() {
+    //   this.fetchPosts();
+    // }
   }
 }
 </script>
@@ -173,6 +214,11 @@ export default {
 
 .current-page {
   border: 2px solid teal;
+}
+
+.observer {
+  height: 30px;
+  background: green;
 }
 
 </style>
