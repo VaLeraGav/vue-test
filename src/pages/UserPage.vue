@@ -17,10 +17,9 @@
       </my-button>
       <my-select
           v-model="selectedSort"
-          :options="sortOption"
+          :options="sortOptions"
       />
     </div>
-
     <my-dialog v-model:show="dialogVisible">
       <post-form
           @create="createPost"
@@ -34,11 +33,20 @@
     />
     <div v-else>Идет загрузка...</div>
 
-    <div v-intersection="loadMorePosts" class="observer">
-
-    </div>
-<!-- <div class="page__wrapper"></div> -->
-
+    <div v-intersection="loadMorePosts" class="observer"></div>
+    <!--    <div class="page__wrapper">-->
+    <!--      <div-->
+    <!--        v-for="pageNumber in totalPages"-->
+    <!--        :key="pageNumber"-->
+    <!--        class="page"-->
+    <!--        :class="{-->
+    <!--          'current-page': page === pageNumber-->
+    <!--        }"-->
+    <!--        @click="changePage(pageNumber)"-->
+    <!--      >-->
+    <!--        {{ pageNumber }}-->
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
 </template>
 
@@ -69,9 +77,9 @@ export default {
       page: 1,
       limit: 10,
       totalPages: 0,
-      sortOption: [
+      sortOptions: [
         {value: 'title', name: 'По названию'},
-        {value: 'body', name: 'По названию'}
+        {value: 'body', name: 'По содержимому'},
       ]
     }
   },
@@ -149,9 +157,8 @@ export default {
   // всегда возвращает какое-то вычисление, возвращаться единожды
   computed: {
     sortedPosts() {
-      return [...this.posts.sort((post1, post2) =>
+      return [...this.posts].sort((post1, post2) =>
           post1[this.selectedSort]?.localeCompare(post2[this.selectedSort]))
-      ];
     },
     sortedAndSearchedPosts() {
       return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery));

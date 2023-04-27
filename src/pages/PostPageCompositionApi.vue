@@ -9,16 +9,15 @@
     />
 
     <div class="add__btns">
-      <my-button
-      >
-        Создать пост
-      </my-button>
+<!--      <my-button-->
+<!--      >-->
+<!--        Создать пост-->
+<!--      </my-button>-->
       <my-select
           v-model="selectedSort"
-          :options="sortOption"
+          :options="sortOptions"
       />
     </div>
-
     <my-dialog v-model:show="dialogVisible">
       <post-form
       />
@@ -30,36 +29,32 @@
     />
     <div v-else>Идет загрузка...</div>
   </div>
-
 </template>
 
 <script>
 import PostList from "@/components/PostList";
 import PostForm from "@/components/PostForm";
-import MyDialog from "@/components/ui/MyDialog";
 import MyButton from "@/components/ui/MyButton";
 import MySelect from "@/components/ui/MySelect";
 import MyInput from "@/components/ui/MyInput";
-import {ref} from 'vue';
 import {usePosts} from "@/hooks/usePosts";
 import useSortedPosts from "@/hooks/useSortedPosts";
 import useSortedAndSearchedPosts from "@/hooks/useSortedAndSearchedPosts";
-
+import {ref} from 'vue';
 
 export default {
   components: {
     MyInput,
     MySelect,
     MyButton,
-    MyDialog,
     PostForm, PostList
   },
   data() {
     return {
       dialogVisible: false,
-      sortOption: [
+      sortOptions: [
         {value: 'title', name: 'По названию'},
-        {value: 'body', name: 'По названию'}
+        {value: 'body', name: 'По содержимому'},
       ]
     }
   },
