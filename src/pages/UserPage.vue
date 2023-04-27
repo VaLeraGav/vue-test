@@ -37,8 +37,7 @@
     <div v-intersection="loadMorePosts" class="observer">
 
     </div>
-    <div class="page__wrapper">
-    </div>
+<!-- <div class="page__wrapper"></div> -->
 
   </div>
 </template>
