@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import toggleMixin from "@/components/mixins/toggleMixin";
+import toggleMixin from "@/mixins/toggleMixin";
 
 export default {
   name: 'my-dialog',
